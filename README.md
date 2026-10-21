@@ -89,14 +89,10 @@ python -m pytest -q                                     # tests
 ```
 
 ### Example multi-step task
-
-> *"Find the year the Eiffel Tower was completed, take its square root × 3 (2 decimals), and say how many years ago it was."*
-
-1. `web_search` → 1889
-2. `calculator("round(sqrt(1889) * 3, 2)")` → 130.39
-3. `current_datetime` → 2026
-4. `calculator("2026 - 1889")` → 137
-5. Final answer
+1. `web_search("Eiffel Tower completion year")` → 1889
+2. `current_datetime` → 2026-10-21
+3. `calculator("sqrt(1889) * 3")` → 130.3878829 (the model rounds it to 130.39)
+4. Final answer: 130.39, and 137 years ago (2026 − 1889)
 
 ## Design notes
 
