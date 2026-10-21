@@ -107,3 +107,27 @@ python -m pytest -q                                     # tests
 
 ## Possible extensions
 Native tool-calling APIs, memory across runs, a planner step before acting, token/cost tracking per step.
+
+## Run in Google Colab
+
+1. Upload the project folder (or `git clone` it) in a Colab notebook.
+2. `!pip install -q -r requirements.txt`
+3. Add your key in Colab **Secrets** (name `OPENAI_API_KEY`) and set:
+```python
+   import os
+   from google.colab import userdata
+   os.environ["OPENAI_API_KEY"] = userdata.get("OPENAI_API_KEY")
+   os.environ["OPENAI_BASE_URL"] = "https://api.groq.com/openai/v1"
+   os.environ["OPENAI_MODEL"] = "qwen/qwen3.8-27b"
+```
+4. `!python main.py --demo --provider openai`
+
+## Notes on model choice (real debugging findings)
+
+- Tested with `qwen/qwen3.8-27b` on Groq's free tier. It follows the JSON format reliably.
+- `openai/gpt-oss-120b` on Groq returned **empty `content`** (the answer stayed in a hidden `reasoning` field), so the agent's
+  format-error recovery kicked in repeatedly and eventually aborted with `too_many_errors`. Switching model fixed it.
+  The guardrails made it easy to tell this was a model problem, not a code problem.
+- Free-tier rate limits: `llm.py` retries after 15s on HTTP 429 and caps `max_tokens` (env `MAX_TOKENS`, default 300).
+- The model sometimes does arithmetic itself instead of calling the calculator. The prompt asks for the calculator,
+  but this is not enforced.
